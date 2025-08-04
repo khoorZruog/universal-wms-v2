@@ -1,69 +1,86 @@
-# React + TypeScript + Vite
+# Universal WMS v2 倉庫管理システム
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React (TypeScript) とZustandで構築された、普遍的で拡張性の高い倉庫管理システム（WMS）のコアテンプレートです。
 
-Currently, two official plugins are available:
+このプロダクトは、安易な数量更新ではなく、すべての在庫変動を取引（トランザクション）として記録する**「フローベースの在庫台帳」**モデルを採用しており、完全な追跡可能性と監査可能性を確保します 。これにより、「なぜその在庫数になったのか？」という問いにいつでも正確に答えることができます。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![フローベースモデルの概念図](https://www.notion.so/Universal-WMS-v2-23c074678247809db53cfaf1f8c9505e?v=24007467824780ddbb65000cb3991bf2&source=copy_link#23e0746782478031b2c0e1b3980b913b)
 
-## Expanding the ESLint configuration
+## 🎯 ターゲットユーザー
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+本プロジェクトは、以下のようなユーザーを対象としています。
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* **React学習者**: `useState`から一歩進んだ、より実践的で堅牢なアプリケーション構築方法を学びたい方。
+* **エンジニア、プロダクト責任者**: 拡張性の高いWMSのボイラープレート（雛形）を求めている方。
+* **物流担当者、中小企業の経営者**: Excel管理から脱却し、シンプルで信頼性の高い在庫管理ツールを導入したい方。
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## ✨ 主な特徴
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+* **フローベースモデル**: すべての在庫の動きを取引として記録し、完全な監査証跡を提供します。
+* **APIファースト設計**: UIとビジネスロジックが完全に分離されており、将来的な機能拡張や外部システム連携が容易です。
+* **実践的なWMSコア機能**: WMSの四本柱である「入荷」「在庫」「出荷」「棚卸」の基本的なプロセスを網羅しています。
+* **ロット管理**: 多くの業界で必須要件となるロット管理と、それに伴う先入れ先出し（FIFO）引当を基本機能として組み込んでいます。
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ 技術仕様
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+* **フロントエンド**: React (TypeScript), Vite
+* **状態管理**: Zustand
+* **スタイリング**: Tailwind CSS
+* **データ永続化**: localStorage (MVP段階)
+* **テスト**: Jest, React Testing Library
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### データ構造
+
+本プロジェクトは、フローベースモデルを実現するために以下の4つのコアなデータ構造（スキーマ）を定義しています。
+
+1.  `products`: 商品マスタ
+2.  `locations`: 保管場所（ロケーション）マスタ
+3.  `lots`: ロットマスタ
+4.  `inventory_transactions`: 在庫取引ログ（すべての在庫変動を記録する追記専用の台帳）
+
+## 🚀 セットアップと実行方法
+
+このプロジェクトをローカル環境で実行するための手順は以下の通りです。
+
+1.  **リポジトリをクローンする:**
+    ```bash
+    git clone [https://github.com/khoorZruog/universal-wms-v2.git](https://github.com/khoorZruog/universal-wms-v2.git)
+    cd universal-wms-v2
+    ```
+
+2.  **依存パッケージをインストールする:**
+    ```bash
+    npm install
+    ```
+
+3.  **開発サーバーを起動する:**
+    ```bash
+    npm run dev
+    ```
+
+4.  **ブラウザでアクセスする:**
+    ターミナルに表示されたURL（通常は `http://localhost:5173`）をブラウザで開いてください。
+
+## 📋 機能一覧 (MVPスコープ)
+
+### マスタ管理 (CRUD)
+
+* [x] **商品マスタ**: 商品の登録・一覧・編集・削除機能
+* [x] **ロケーションマスタ**: 保管場所の登録・一覧・編集・削除機能
+* [x] **ロットマスタ**: ロット情報の登録・一覧・編集・削除機能
+
+### WMSコアプロセス
+
+* [x] **入荷管理**: ロット情報を含めて商品を受領し、在庫を増加させる取引を記録します。
+* [x] **出荷管理**: 先入れ先出し（FIFO）ロジックに基づき、出荷すべき在庫を自動で引き当て、在庫を減少させる取引を記録します。
+* [x] **在庫移動**: 在庫をロケーション間で移動させ、移動元でマイナス、移動先でプラスの取引を記録します。
+* [x] **棚卸管理**: システム在庫と実在庫の差異を比較し、在庫を調整する取引を記録します。
+
+### データ可視化
+
+* [x] **ダッシュボード**: 総在庫数などのKPIや、最新の取引履歴を確認できます。
+* [x] **取引履歴画面**: 記録されたすべての在庫トランザクションを時系列で一覧表示・検索できます。
+
+### 品質保証
+
+* [x] **ユニットテスト/インテグレーションテスト**: JestとReact Testing Libraryを用いて、FIFO引当ロジックや主要な画面操作のテストを記述しています。
